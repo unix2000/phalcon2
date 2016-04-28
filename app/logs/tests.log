@@ -1,0 +1,20 @@
+[Sun, 24 Apr 16 12:30:14 +0800][CRITICAL] This is a critical messages
+[Sun, 24 Apr 16 12:30:14 +0800][EMERGENCY] This is an emergency message
+[Sun, 24 Apr 16 12:30:14 +0800][DEBUG] This is a debug message
+[Sun, 24 Apr 16 12:30:14 +0800][ERROR] This is an error message
+[Sun, 24 Apr 16 12:30:14 +0800][INFO] This is an info message
+[Sun, 24 Apr 16 12:30:14 +0800][NOTICE] This is a notice message
+[Sun, 24 Apr 16 12:30:14 +0800][WARNING] This is a warning message
+[Sun, 24 Apr 16 12:30:14 +0800][ALERT] This is an alert message
+[Sun, 24 Apr 16 12:30:14 +0800][ERROR] This is another error message
+[Sun, 24 Apr 16 12:30:14 +0800][DEBUG] This is a message
+[Sun, 24 Apr 16 12:36:29 +0800][CRITICAL] This is a critical messages
+[Sun, 24 Apr 16 12:36:29 +0800][EMERGENCY] This is an emergency message
+[Sun, 24 Apr 16 12:36:29 +0800][DEBUG] This is a debug message
+[Sun, 24 Apr 16 12:36:29 +0800][ERROR] This is an error message
+[Sun, 24 Apr 16 12:36:29 +0800][INFO] This is an info message
+[Sun, 24 Apr 16 12:36:29 +0800][NOTICE] This is a notice message
+[Sun, 24 Apr 16 12:36:29 +0800][WARNING] This is a warning message
+[Sun, 24 Apr 16 12:36:29 +0800][ALERT] This is an alert message
+[Sun, 24 Apr 16 12:36:29 +0800][ERROR] This is another error message
+[Sun, 24 Apr 16 12:36:29 +0800][DEBUG] This is a message
