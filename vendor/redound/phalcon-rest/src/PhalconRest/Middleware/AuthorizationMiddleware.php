@@ -2,28 +2,36 @@
 
 namespace PhalconRest\Middleware;
 
-use App\Constants\Services;
 use Phalcon\Acl;
 use Phalcon\Events\Event;
+use Phalcon\Mvc\Micro;
+use Phalcon\Mvc\Micro\MiddlewareInterface;
+use Phalcon\Mvc\User\Plugin;
+use PhalconRest\Api;
 use PhalconRest\Constants\ErrorCodes;
 use PhalconRest\Exception;
 
-class AuthorizationMiddleware extends \PhalconRest\Mvc\Plugin
+class AuthorizationMiddleware extends Plugin implements MiddlewareInterface
 {
-    public function beforeExecuteRoute(Event $event, \PhalconRest\Api $api)
+    public function beforeExecuteRoute(Event $event, Api $api)
     {
-        $resource = $api->getMatchedResource();
+        $collection = $api->getMatchedCollection();
         $endpoint = $api->getMatchedEndpoint();
 
-        if (!$resource || !$endpoint) {
+        if (!$collection || !$endpoint) {
             return;
         }
 
-        $allowed = $this->acl->isAllowed($this->userService->getRole(), $resource->getIdentifier(),
+        $allowed = $this->acl->isAllowed($this->userService->getRole(), $collection->getIdentifier(),
             $endpoint->getIdentifier());
 
         if (!$allowed) {
             throw new Exception(ErrorCodes::ACCESS_DENIED);
         }
+    }
+
+    public function call(Micro $api)
+    {
+        return true;
     }
 }

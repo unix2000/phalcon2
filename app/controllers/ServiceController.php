@@ -55,7 +55,8 @@ class ServiceController extends Controller {
     
     public function sessionAction(){}
     public function dbAction(){
-        $db = $this->db;
+        //$db = $this->db;
+        dump($this->crypt);
     }
     public function routerAction(){
         $router = $this->router;

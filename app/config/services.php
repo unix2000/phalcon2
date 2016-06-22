@@ -16,6 +16,7 @@ use Phalcon\Mvc\View\Simple as SimpleView;
 use Phalcon\Mvc\Router;
 use Phalcon\Crypt;
 use Phalcon\Mvc\Dispatcher;
+use app\library\Verify;
 
 /**
  * The FactoryDefault Dependency Injector automatically register the right services providing a full stack framework
@@ -124,3 +125,14 @@ $di->set('dispatcher', function () {
     $dispatcher->setDefaultNamespace('app\controllers');
     return $dispatcher;
 });
+
+//profile register
+$di->setShared('profiler', function(){
+    $profiler = new \Fabfuel\Prophiler\Profiler();
+    return $profiler;
+});
+
+$di->set( 'verify', function (){
+    $verify = new Verify();
+    return $verify;
+}, true );

@@ -74,6 +74,9 @@ class DbController extends \Phalcon\Mvc\Controller {
     public function viewAction(){
         dump($this->view);
     }
+    public function mmAction(){
+        dump($this->modelsManager);
+    }
     public function randomAction(){
         $random = new \Phalcon\Security\Random();
         //$bytes = $random->bytes();
@@ -132,7 +135,7 @@ class DbController extends \Phalcon\Mvc\Controller {
         $query = $this->modelsManager->createQuery(
             //"select * from items"
             //"select * from items limit 0,10"
-            "select items.name,items.email from items limit 0,10"
+            "select c.name,c.email from app\models\Items as c limit 0,10"
         );
 //         dump($query);
         $data = $query->execute();
@@ -158,7 +161,7 @@ class DbController extends \Phalcon\Mvc\Controller {
     }
     public function builderAction(){
         $data = $this->modelsManager->createBuilder()
-            ->from('Items')
+            ->from('app\models\Items')
             ->columns(array('name','email'))
 //             ->limit(10,0)
             ->limit(20)

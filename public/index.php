@@ -1,7 +1,7 @@
-<?php
+﻿<?php
 
 error_reporting(E_ALL);
-
+ini_set( 'display_errors', '1' );
 define('APP_PATH', realpath('..'));
 include APP_PATH . "/app/common/global.php";
 //加载compose第三方类库
@@ -22,7 +22,15 @@ try {
      * Read services
      */
     include APP_PATH . "/app/config/services.php";
-
+    include APP_PATH . "/app/config/router.php";
+    
+//     include APP_PATH . "/app/config/profile.php";
+//     $profiler = new \Fabfuel\Prophiler\Profiler();
+//     $toolbar = new \Fabfuel\Prophiler\Toolbar($profiler);
+//     $toolbar->addDataCollector(new \Fabfuel\Prophiler\DataCollector\Request());
+//     $profiler->addAggregator(new \Fabfuel\Prophiler\Aggregator\Database\QueryAggregator());
+//     $profiler->addAggregator(new \Fabfuel\Prophiler\Aggregator\Cache\CacheAggregator());
+//     echo $toolbar->render();
     /**
      * Handle the request
      */
@@ -33,6 +41,17 @@ try {
     //$provider -> register();//注册
     //$provider -> boot(); //启动
 //     (new Snowair\Debugbar\ServiceProvider('../config/debugbar.php'))->start();
+    //register modules
+    $application->registerModules(array(
+        'admin' => array(
+            'className' => 'app\modules\admin\Module',
+            'path' => APP_PATH . '/app/modules/admin/Module.php'
+        ),
+//         'user' => array(
+//             'className' => 'app\modules\user\Module',
+//             'path' => APP_PATH . '/app/modules/user/Module.php'
+//         ),
+    ));
     echo $application->handle()->getContent();
 
 } catch (\Exception $e) {

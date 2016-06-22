@@ -45,24 +45,29 @@ class Collection
         ));
     }
 
-    public function addManyResources(array $resources)
+    public function addRequest(Request $request)
     {
-        /** @var \PhalconRest\Api\Resource $resource */
-        foreach ($resources as $resource) {
-            $this->addResource($resource);
+        $this->requests[] = $request;
+    }
+
+    public function addManyCollections(array $collections)
+    {
+        /** @var \PhalconRest\Api\Collection $collection */
+        foreach ($collections as $collection) {
+            $this->addCollection($collection);
         }
     }
 
-    public function addResource(\PhalconRest\Api\Resource $resource)
+    public function addCollection(\PhalconRest\Api\Collection $collection)
     {
-        foreach ($resource->getEndpoints() as $endpoint) {
+        foreach ($collection->getEndpoints() as $endpoint) {
 
             $this->addRequest(new Request(
                 $this->id,
                 uniqid(),
-                $resource->getPrefix() . $endpoint->getPath(),
+                $collection->getPrefix() . $endpoint->getPath(),
                 $endpoint->getDescription(),
-                $this->basePath . $resource->getPrefix() . $endpoint->getPath(),
+                $this->basePath . $collection->getPrefix() . $endpoint->getPath(),
                 $endpoint->getHttpMethod(),
                 'Authorization: Bearer {{authToken}}',
                 null,
@@ -74,10 +79,5 @@ class Collection
     public function getRequests()
     {
         return $this->requests;
-    }
-
-    public function addRequest(Request $request)
-    {
-        $this->requests[] = $request;
     }
 }

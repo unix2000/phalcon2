@@ -4,9 +4,8 @@ namespace PhalconRest\Transformers;
 
 use Phalcon\Db\Column;
 use Phalcon\Di;
-use PhalconRest\Constants\Services;
 
-class ModelTransformer extends \League\Fractal\TransformerAbstract
+class ModelTransformer extends Transformer
 {
     const TYPE_UNKNOWN = 0;
 
@@ -24,137 +23,9 @@ class ModelTransformer extends \League\Fractal\TransformerAbstract
     protected $modelColumnMap;
     protected $modelAttributes;
 
-
-    public function getModelClass()
-    {
-        return $this->modelClass;
-    }
-
-    public function setModelClass($modelClass)
-    {
-        $this->modelClass = $modelClass;
-    }
-
-    /**
-     * @return array Properties to be included in the response
-     */
-    protected function includedProperties()
-    {
-        $attributes =  $this->getModelAttributes();
-        $columnMap = $this->getModelColumnMap();
-
-        if(!is_array($columnMap)){
-            return $attributes;
-        }
-
-        return array_map(function($attribute) use ($columnMap){
-
-            return array_key_exists($attribute, $columnMap) ? $columnMap[$attribute] : $attribute;
-
-        }, $attributes);
-    }
-
-    /**
-     * @return array Properties to be excluded in the response
-     */
-    protected function excludedProperties()
-    {
-        return [];
-    }
-
-    protected function additionalFields($item)
-    {
-        return [];
-    }
-
-    /**
-     * Returns keyMap to be used.
-     * Keys are the model properties, values are the response keys
-     *
-     * @return array
-     */
-    protected function keyMap()
-    {
-        return [];
-    }
-
-    protected function typeMap()
-    {
-        return [];
-    }
-
-
-    protected function getModel($item)
-    {
-        return $item;
-    }
-
-    protected function getFieldValue($item, $propertyName, $fieldName)
-    {
-        $dataType = array_key_exists($propertyName,
-            $this->getModelDataTypes()) ? $this->getModelDataTypes()[$propertyName] : null;
-
-        $model = $this->getModel($item);
-        $value = $model->$propertyName;
-
-        if($value === null){
-            return null;
-        }
-
-        $typedValue = $value;
-
-        switch ($dataType) {
-
-            case self::TYPE_INTEGER: {
-
-                $typedValue = (int)$value;
-                break;
-            }
-
-            case self::TYPE_FLOAT: {
-
-                $typedValue = (float)$value;
-                break;
-            }
-
-            case self::TYPE_DOUBLE: {
-
-                $typedValue = (double)$value;
-                break;
-            }
-
-            case self::TYPE_BOOLEAN: {
-
-                $typedValue = (bool)$value;
-                break;
-            }
-
-            case self::TYPE_STRING: {
-
-                $typedValue = (string)$value;
-                break;
-            }
-
-            case self::TYPE_DATE: {
-
-                $typedValue = strtotime($value);
-                break;
-            }
-
-            case self::TYPE_JSON: {
-
-                $typedValue = json_decode($value);
-                break;
-            }
-        }
-
-        return $typedValue;
-    }
-
-
     public function transform($item)
     {
-        if($item == null){
+        if ($item == null) {
             return null;
         }
 
@@ -172,9 +43,174 @@ class ModelTransformer extends \League\Fractal\TransformerAbstract
         return $combinedResult;
     }
 
+    /**
+     * Returns keyMap to be used.
+     * Keys are the model properties, values are the response keys
+     *
+     * @return array
+     */
+    protected function keyMap()
+    {
+        return [];
+    }
+
     public function getResponseProperties()
     {
         return array_diff($this->includedProperties(), $this->excludedProperties());
+    }
+
+    /**
+     * @return array Properties to be included in the response
+     */
+    protected function includedProperties()
+    {
+        $attributes = $this->getModelAttributes();
+        $columnMap = $this->getModelColumnMap();
+
+        if (!is_array($columnMap)) {
+            return $attributes;
+        }
+
+        return array_map(function ($attribute) use ($columnMap) {
+
+            return array_key_exists($attribute, $columnMap) ? $columnMap[$attribute] : $attribute;
+
+        }, $attributes);
+    }
+
+    protected function getModelAttributes()
+    {
+        if (!$this->modelAttributes) {
+
+            $modelClass = $this->getModelClass();
+
+            $this->modelAttributes = $this->modelsMetadata->getAttributes(new $modelClass);
+        }
+
+        return $this->modelAttributes;
+    }
+
+    public function getModelClass()
+    {
+        return $this->modelClass;
+    }
+
+    public function setModelClass($modelClass)
+    {
+        $this->modelClass = $modelClass;
+    }
+
+    protected function getModelColumnMap()
+    {
+        if (!$this->modelColumnMap) {
+
+            $modelClass = $this->getModelClass();
+            $metaDataColumnMap = $this->modelsMetadata->getColumnMap(new $modelClass);
+
+            $this->modelColumnMap = array_merge($metaDataColumnMap ? $metaDataColumnMap : [], $this->keyMap());
+        }
+
+        return $this->modelColumnMap;
+    }
+
+    /**
+     * @return array Properties to be excluded in the response
+     */
+    protected function excludedProperties()
+    {
+        return [];
+    }
+
+    protected function getFieldValue($item, $propertyName, $fieldName)
+    {
+        $dataType = array_key_exists($propertyName,
+            $this->getModelDataTypes()) ? $this->getModelDataTypes()[$propertyName] : null;
+
+        $model = $this->getModel($item);
+        $value = $model->$propertyName;
+
+        if ($value === null) {
+            return null;
+        }
+
+        $typedValue = $value;
+
+        switch ($dataType) {
+
+            case self::TYPE_INTEGER: {
+
+                $typedValue = $this->formatHelper->int($value);
+                break;
+            }
+
+            case self::TYPE_FLOAT: {
+
+                $typedValue = $this->formatHelper->float($value);
+                break;
+            }
+
+            case self::TYPE_DOUBLE: {
+
+                $typedValue = $this->formatHelper->double($value);
+                break;
+            }
+
+            case self::TYPE_BOOLEAN: {
+
+                $typedValue = $this->formatHelper->bool($value);
+                break;
+            }
+
+            case self::TYPE_STRING: {
+
+                $typedValue = (string)$value;
+                break;
+            }
+
+            case self::TYPE_DATE: {
+
+                $typedValue = $this->formatHelper->date($value);
+                break;
+            }
+
+            case self::TYPE_JSON: {
+
+                $typedValue = json_decode($value);
+                break;
+            }
+        }
+
+        return $typedValue;
+    }
+
+    public function getModelDataTypes()
+    {
+        if (!$this->modelDataTypes) {
+
+            $modelClass = $this->getModelClass();
+            $columnMap = $this->getModelColumnMap();
+
+            $dataTypes = $this->modelsMetadata->getDataTypes(new $modelClass);
+
+            $mappedDataTypes = [];
+
+            if (is_array($columnMap)) {
+
+                foreach ($dataTypes as $attributeName => $dataType) {
+
+                    $mappedAttributeName = array_key_exists($attributeName,
+                        $columnMap) ? $columnMap[$attributeName] : $attributeName;
+                    $mappedDataTypes[$mappedAttributeName] = $this->getMappedDatabaseType($dataType);
+                }
+            } else {
+
+                $mappedDataTypes = $dataTypes;
+            }
+
+            $this->modelDataTypes = array_merge($mappedDataTypes, $this->typeMap());
+        }
+
+        return $this->modelDataTypes;
     }
 
     protected function getMappedDatabaseType($type)
@@ -241,67 +277,18 @@ class ModelTransformer extends \League\Fractal\TransformerAbstract
         return $responseType;
     }
 
-    protected function getModelAttributes()
+    protected function typeMap()
     {
-        if (!$this->modelAttributes) {
-
-            /** @var \Phalcon\Mvc\Model\MetaData $modelsMetaData */
-            $modelsMetaData = Di::getDefault()->get(Services::MODELS_METADATA);
-
-            $modelClass = $this->getModelClass();
-
-            $this->modelAttributes = $modelsMetaData->getAttributes(new $modelClass);
-        }
-
-        return $this->modelAttributes;
+        return [];
     }
 
-    public function getModelDataTypes()
+    protected function getModel($item)
     {
-        if (!$this->modelDataTypes) {
-
-            /** @var \Phalcon\Mvc\Model\MetaData $modelsMetaData */
-            $modelsMetaData = Di::getDefault()->get(Services::MODELS_METADATA);
-
-            $modelClass = $this->getModelClass();
-            $columnMap = $this->getModelColumnMap();
-
-            $dataTypes = $modelsMetaData->getDataTypes(new $modelClass);
-
-            $mappedDataTypes = [];
-
-            if(is_array($columnMap)) {
-
-                foreach ($dataTypes as $attributeName => $dataType) {
-
-                    $mappedAttributeName = array_key_exists($attributeName, $columnMap) ? $columnMap[$attributeName] : $attributeName;
-                    $mappedDataTypes[$mappedAttributeName] = $this->getMappedDatabaseType($dataType);
-                }
-            }
-            else {
-
-                $mappedDataTypes = $dataTypes;
-            }
-
-            $this->modelDataTypes = array_merge($mappedDataTypes, $this->typeMap());
-        }
-
-        return $this->modelDataTypes;
+        return $item;
     }
 
-    protected function getModelColumnMap()
+    protected function additionalFields($item)
     {
-        if (!$this->modelColumnMap) {
-
-            /** @var \Phalcon\Mvc\Model\MetaData $modelsMetaData */
-            $modelsMetaData = Di::getDefault()->get(Services::MODELS_METADATA);
-
-            $modelClass = $this->getModelClass();
-            $metaDataColumnMap = $modelsMetaData->getColumnMap(new $modelClass);
-
-            $this->modelColumnMap = array_merge($metaDataColumnMap ? $metaDataColumnMap : [], $this->keyMap());
-        }
-
-        return $this->modelColumnMap;
+        return [];
     }
 }

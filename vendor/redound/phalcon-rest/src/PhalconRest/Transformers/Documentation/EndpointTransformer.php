@@ -2,11 +2,12 @@
 
 namespace PhalconRest\Transformers\Documentation;
 
-use PhalconRest\Api\Endpoint;
+use PhalconRest\Export\Documentation\Endpoint as DocumentationEndpoint;
+use PhalconRest\Transformers\Transformer;
 
-class EndpointTransformer extends \League\Fractal\TransformerAbstract
+class EndpointTransformer extends Transformer
 {
-    public function transform(\PhalconRest\Export\Documentation\Endpoint $endpoint)
+    public function transform(DocumentationEndpoint $endpoint)
     {
         return [
             'name' => $endpoint->getName(),

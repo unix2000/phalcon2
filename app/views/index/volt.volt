@@ -45,8 +45,3 @@
 
 {# json_decode filter #}
 {% set decoded = '{"one":1,"two":2,"three":3}'|json_decode %}
-
-{# url_encode filter #}
-
-{# convert_encoding filter #}
-{{ "désolé"|convert_encoding('utf8', 'latin1') }}

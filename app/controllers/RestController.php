@@ -5,6 +5,8 @@ use PhalconRest\Mvc\Controllers\FractalController;
 use PhalconRest\Constants\Services;
 use PhalconRest\Di\FactoryDefault;
 
+//整合实例请见app\library\App\controller
+//未产品详测,代码不稳定,依赖库较多,请谨慎使用
 class RestController extends FractalController{
 //     function responseAction(){
         
@@ -22,15 +24,15 @@ class RestController extends FractalController{
         ]);
     }
     public function serviceAction(){
-//         $di = new FactoryDefault();
-//         $request = $di->get(Services::REQUEST);
-//         $response = $di->get(Services::RESPONSE);
-//         $authenticationManager = $di->get(Services::AUTH_MANAGER);
-//         //$fractalManager = $di->get(Services::FRACTAL_MANAGER);
-//         $tokenParser = $di->get(Services::TOKEN_PARSER);
-//         $query = $di->get(Services::QUERY);
-//         $phqlQueryParser = $di->get(Services::PHQL_QUERY_PARSER);
-//         $urlQueryParser = $di->get(AppServices::URL_QUERY_PARSER);
-//         dump($request);
+        $di = new FactoryDefault();
+        $request = $di->get(Services::REQUEST);
+        $response = $di->get(Services::RESPONSE);
+        $authenticationManager = $di->get(Services::AUTH_MANAGER);
+        $fractalManager = $di->get(Services::FRACTAL_MANAGER);
+        $tokenParser = $di->get(Services::TOKEN_PARSER);
+        $query = $di->get(Services::QUERY);
+        $phqlQueryParser = $di->get(Services::PHQL_QUERY_PARSER);
+        $urlQueryParser = $di->get(AppServices::URL_QUERY_PARSER);
+        dump($request);
     }
 }

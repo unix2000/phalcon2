@@ -39,4 +39,7 @@ class Services
     const USER_SERVICE = 'userService';
     const PHQL_QUERY_PARSER = 'phqlQueryParser';
     const URL_QUERY_PARSER = 'urlQueryParser';
+    const ERROR_HELPER = 'errorHelper';
+    const FORMAT_HELPER = 'formatHelper';
 }
+
