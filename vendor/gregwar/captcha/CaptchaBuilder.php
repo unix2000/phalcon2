@@ -56,7 +56,7 @@ class CaptchaBuilder implements CaptchaBuilderInterface
     /**
      * @var bool
      */
-    protected $distortion = true;
+    protected $distortion = false;
 
     /**
      * The maximum number of lines to draw in front of
@@ -396,7 +396,7 @@ class CaptchaBuilder implements CaptchaBuilderInterface
         }
 
         if ($font === null) {
-            $font = __DIR__ . '/Font/captcha'.$this->rand(0, 5).'.ttf';
+            $font = __DIR__ . '/Font/captcha'.$this->rand(0, 4).'.ttf';
         }
 
         if (empty($this->backgroundImages)) {

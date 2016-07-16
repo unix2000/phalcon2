@@ -46,8 +46,7 @@ class CrudResourceController extends \PhalconRest\Mvc\Controllers\ResourceContro
 
     protected function getAllData()
     {
-        $phqlBuilder = $this->phqlQueryParser->fromQuery($this->query);
-        $phqlBuilder->from($this->getResource()->getModel());
+        $phqlBuilder = $this->phqlQueryParser->fromQuery($this->query, $this->getResource());
 
         $this->modifyReadQuery($phqlBuilder);
         $this->modifyAllQuery($phqlBuilder);
@@ -123,10 +122,9 @@ class CrudResourceController extends \PhalconRest\Mvc\Controllers\ResourceContro
 
     protected function getFindData($id)
     {
-        $phqlBuilder = $this->phqlQueryParser->fromQuery($this->query);
+        $phqlBuilder = $this->phqlQueryParser->fromQuery($this->query, $this->getResource());
 
         $phqlBuilder
-            ->from($this->getResource()->getModel())
             ->andWhere('[' . $this->getResource()->getModel() . '].' . $this->getModelPrimaryKey() . ' = :id:',
                 ['id' => $id])
             ->limit(1);
@@ -316,7 +314,7 @@ class CrudResourceController extends \PhalconRest\Mvc\Controllers\ResourceContro
     protected function createItem(Model $item, $data)
     {
         $this->beforeAssignData($item, $data);
-        $item->assign($data);
+        $item->assign($data, null, $this->whitelistCreate());
         $this->afterAssignData($item, $data);
 
         $this->beforeSave($item);
@@ -455,6 +453,22 @@ class CrudResourceController extends \PhalconRest\Mvc\Controllers\ResourceContro
         return true;
     }
 
+    protected function whitelist()
+    {
+        return null;
+    }
+
+    protected function whitelistCreate()
+    {
+        return $this->whitelist();
+    }
+
+    protected function whitelistUpdate()
+    {
+        return $this->whitelist();
+    }
+
+
     /**
      * @param Model $item
      * @param $data
@@ -464,7 +478,7 @@ class CrudResourceController extends \PhalconRest\Mvc\Controllers\ResourceContro
     protected function updateItem(Model $item, $data)
     {
         $this->beforeAssignData($item, $data);
-        $item->assign($data);
+        $item->assign($data, null, $this->whitelistUpdate());
         $this->afterAssignData($item, $data);
 
         $this->beforeSave($item);

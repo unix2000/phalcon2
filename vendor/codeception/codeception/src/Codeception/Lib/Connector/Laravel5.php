@@ -46,6 +46,21 @@ class Laravel5 extends Client
     private $eventsDisabled;
 
     /**
+     * @var array
+     */
+    private $bindings = [];
+
+    /**
+     * @var array
+     */
+    private $contextualBindings = [];
+
+    /**
+     * @var array
+     */
+    private $instances = [];
+
+    /**
      * @var object
      */
     private $oldDb;
@@ -107,7 +122,7 @@ class Laravel5 extends Client
         // Store a reference to the database object
         // so the database connection can be reused during tests
         $this->oldDb = null;
-        if ($this->app['db'] && $this->app['db']->connection()) {
+        if (isset($this->app['db']) && $this->app['db']->connection()) {
             $this->oldDb = $this->app['db'];
         }
 
@@ -151,6 +166,10 @@ class Laravel5 extends Client
         if ($this->module->config['disable_events'] || $this->eventsDisabled) {
             $this->mockEventDispatcher();
         }
+
+        $this->applyBindings();
+        $this->applyContextualBindings();
+        $this->applyInstances();
 
         $this->module->setApplication($this->app);
     }
@@ -214,6 +233,40 @@ class Laravel5 extends Client
         return $segments[0];
     }
 
+    /**
+     * Apply the registered Laravel service container bindings.
+     */
+    private function applyBindings()
+    {
+        foreach ($this->bindings as $abstract => $binding) {
+            list($concrete, $shared) = $binding;
+
+            $this->app->bind($abstract, $concrete, $shared);
+        }
+    }
+
+    /**
+     * Apply the registered Laravel service container contextual bindings.
+     */
+    private function applyContextualBindings()
+    {
+        foreach ($this->contextualBindings as $concrete => $bindings) {
+            foreach ($bindings as $abstract => $implementation) {
+                $this->app->addContextualBinding($concrete, $abstract, $implementation);
+            }
+        }
+    }
+
+    /**
+     * Apply the registered Laravel service container instance bindings.
+     */
+    private function applyInstances()
+    {
+        foreach ($this->instances as $abstract => $instance) {
+            $this->app->instance($abstract, $instance);
+        }
+    }
+
     //======================================================================
     // Public methods called by module
     //======================================================================
@@ -271,5 +324,47 @@ class Laravel5 extends Client
     {
         $this->middlewareDisabled = true;
         $this->app->instance('middleware.disable', true);
+    }
+
+    /**
+     * Register a Laravel service container binding that should be applied
+     * after initializing the Laravel Application object.
+     *
+     * @param $abstract
+     * @param $concrete
+     * @param bool $shared
+     */
+    public function haveBinding($abstract, $concrete, $shared = false)
+    {
+        $this->bindings[$abstract] = [$concrete, $shared];
+    }
+
+    /**
+     * Register a Laravel service container contextual binding that should be applied
+     * after initializing the Laravel Application object.
+     *
+     * @param $concrete
+     * @param $abstract
+     * @param $implementation
+     */
+    public function haveContextualBinding($concrete, $abstract, $implementation)
+    {
+        if (! isset($this->contextualBindings[$concrete])) {
+            $this->contextualBindings[$concrete] = [];
+        }
+
+        $this->contextualBindings[$concrete][$abstract] = $implementation;
+    }
+
+    /**
+     * Register a Laravel service container instance binding that should be applied
+     * after initializing the Laravel Application object.
+     *
+     * @param $abstract
+     * @param $instance
+     */
+    public function haveInstance($abstract, $instance)
+    {
+        $this->instances[$abstract] = $instance;
     }
 }

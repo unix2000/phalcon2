@@ -5,7 +5,11 @@
     "league/fractal" : "^0.13.0",
     "firebase/php-jwt" : "^3.0",
     "fabfuel/prophiler" : "^1.5",
-    "gregwar/captcha" : "^1.1"
+    "gregwar/captcha" : "^1.1",
+    "symfony/http-foundation": "^3.1",
+    "imagine/imagine" : "dev-master",
+    "crada/phalcon-user-plugin": "~2.0",
+    "phalcon/incubator": "^2.0"
   },
   "repositories" : [ {
     "type" : "composer",

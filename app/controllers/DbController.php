@@ -107,7 +107,7 @@ class DbController extends \Phalcon\Mvc\Controller {
         //dump($this->persistent);
         $numpages = 1;
         if($this->request->isPost()){
-            $query = Criteria::fromInput($this->di, 'items', $this->request->getPost());
+            $query = Criteria::fromInput($this->di, 'app\models\Items', $this->request->getPost());
             $this->persistent->searchParams = $query->getParams();
         } else {
             $numpages = $this->request->getQuery('page','int');

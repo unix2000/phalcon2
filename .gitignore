@@ -2,5 +2,6 @@
 .settings
 .project
 .buildpath
-Runtime
 app/cache
+.git
+.idea

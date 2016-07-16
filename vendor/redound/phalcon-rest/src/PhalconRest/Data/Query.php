@@ -15,12 +15,15 @@ class Query
     const OPERATOR_IS_LESS_THAN_OR_EQUAL = 5;
     const OPERATOR_IS_LIKE = 6;
     const OPERATOR_IS_NOT_EQUAL = 7;
+    const OPERATOR_CONTAINS = 8;
+    const OPERATOR_NOT_CONTAINS = 9;
 
     protected $offset = null;
     protected $limit = null;
     protected $fields = [];
     protected $conditions = [];
     protected $sorters = [];
+    protected $excludes = [];
 
     public function __construct()
     {
@@ -65,6 +68,10 @@ class Query
 
         if ($query->hasSorters()) {
             $this->addManySorters($query->getSorters());
+        }
+
+        if ($query->hasExcludes()) {
+            $this->addManyExcludes($query->getExcludes());
         }
 
         return $this;
@@ -148,5 +155,21 @@ class Query
     public function getSorters()
     {
         return $this->sorters;
+    }
+
+    public function hasExcludes()
+    {
+        return !empty($this->excludes);
+    }
+
+    public function addManyExcludes($excludes)
+    {
+        $this->excludes = array_merge($this->excludes, $excludes);
+        return $this;
+    }
+
+    public function getExcludes()
+    {
+        return $this->excludes;
     }
 }

@@ -2,14 +2,12 @@
 namespace Codeception\Module;
 
 use Codeception\Module as CodeceptionModule;
-use \Codeception\Util\Shared\Asserts as SharedAsserts;
 
 /**
  * Special module for using asserts in your tests.
  */
 class Asserts extends CodeceptionModule
 {
-    use SharedAsserts;
 
     /**
      * Checks that two variables are equal.
@@ -73,14 +71,6 @@ class Asserts extends CodeceptionModule
     }
 
     /**
-     * @deprecated
-     */
-    public function assertGreaterThen($expected, $actual, $message = '')
-    {
-        parent::assertGreaterThan($expected, $actual, $message);
-    }
-
-    /**
      * Checks that actual is greater or equal than expected
      *
      * @param        $expected
@@ -88,14 +78,6 @@ class Asserts extends CodeceptionModule
      * @param string $message
      */
     public function assertGreaterThanOrEqual($expected, $actual, $message = '')
-    {
-        parent::assertGreaterThanOrEqual($expected, $actual, $message);
-    }
-
-    /**
-     * @deprecated
-     */
-    public function assertGreaterThenOrEqual($expected, $actual, $message = '')
     {
         parent::assertGreaterThanOrEqual($expected, $actual, $message);
     }
@@ -377,32 +359,38 @@ class Asserts extends CodeceptionModule
      * @param $callback
      */
     public function expectException($exception, $callback)
-     {
-         $code = null;
-         $msg = null;
-         if (is_object($exception)) {
-             /** @var $exception \Exception  **/
+    {
+        $code = null;
+        $msg = null;
+        if (is_object($exception)) {
+            /** @var $exception \Exception  **/
              $class = get_class($exception);
-             $msg = $exception->getMessage();
-             $code = $exception->getCode();
-         } else {
-             $class = $exception;
-         }
-         try {
-             $callback();
-         } catch (\Exception $e) {
-             if (!$e instanceof $class) {
-                 $this->fail(sprintf("Exception of class $class expected to be thrown, but %s caught", get_class($e)));
-             }
-             if (null !== $msg and $e->getMessage() !== $msg) {
-                 $this->fail(sprintf("Exception of $class expected to be '$msg', but actual message was '%s'", $e->getMessage()));
-             }
-             if (null !== $code and $e->getCode() !== $code) {
-                 $this->fail(sprintf("Exception of $class expected to have code $code, but actual code was %s", $e->getCode()));
-             }
-             $this->assertTrue(true); // increment assertion counter
+            $msg = $exception->getMessage();
+            $code = $exception->getCode();
+        } else {
+            $class = $exception;
+        }
+        try {
+            $callback();
+        } catch (\Exception $e) {
+            if (!$e instanceof $class) {
+                $this->fail(sprintf("Exception of class $class expected to be thrown, but %s caught", get_class($e)));
+            }
+            if (null !== $msg and $e->getMessage() !== $msg) {
+                $this->fail(sprintf(
+                    "Exception of $class expected to be '$msg', but actual message was '%s'",
+                    $e->getMessage()
+                ));
+            }
+            if (null !== $code and $e->getCode() !== $code) {
+                $this->fail(sprintf(
+                    "Exception of $class expected to have code $code, but actual code was %s",
+                    $e->getCode()
+                ));
+            }
+            $this->assertTrue(true); // increment assertion counter
              return;
-         }
-         $this->fail("Expected exception to be thrown, but nothing was caught");
-     }
+        }
+        $this->fail("Expected exception to be thrown, but nothing was caught");
+    }
 }

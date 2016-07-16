@@ -6,9 +6,10 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
-    'phpDocumentor' => array($vendorDir . '/phpdocumentor/reflection-docblock/src'),
     'Psr\\Log\\' => array($vendorDir . '/psr/log'),
     'Prophecy\\' => array($vendorDir . '/phpspec/prophecy/src'),
+    'Imagine' => array($vendorDir . '/imagine/imagine/lib'),
     'Fabfuel\\Prophiler\\' => array($vendorDir . '/fabfuel/prophiler/src'),
+    'Behat\\Gherkin' => array($vendorDir . '/behat/gherkin/src'),
     'AclAdapterMountTrait' => array($vendorDir . '/redound/phalcon-rest/src/PhalconRest/Acl'),
 );

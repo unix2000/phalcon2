@@ -2,6 +2,7 @@
 
 namespace PhalconRest\Data\Query\QueryParsers;
 
+use PhalconRest\Api\Resource as ApiResource;
 use PhalconRest\Data\Query;
 use PhalconRest\Data\Query\Condition;
 use PhalconRest\Data\Query\Sorter;
@@ -22,15 +23,27 @@ class PhqlQueryParser extends Plugin
 
     /**
      * @param Query $query
+     * @param ApiResource $resource
      *
      * @return \Phalcon\Mvc\Model\Query\Builder
      */
-    public function fromQuery(Query $query)
+    public function fromQuery(Query $query, ApiResource $resource)
     {
+        /** @var \Phalcon\Mvc\Model\Manager $modelsManager */
         $modelsManager = $this->di->getShared('modelsManager');
 
         /** @var \Phalcon\Mvc\Model\Query\Builder $builder */
-        $builder = $modelsManager->createBuilder();
+        $builder = $modelsManager->createBuilder()->from($resource->getModel());
+
+        $this->applyQuery($builder, $query, $resource);
+
+        return $builder;
+    }
+
+    public function applyQuery(\Phalcon\Mvc\Model\Query\Builder $builder, Query $query, ApiResource $resource)
+    {
+        $from = $builder->getFrom();
+        $fromString = is_array($from) ? array_keys($from)[0] : $from;
 
         if ($query->hasOffset()) {
 
@@ -45,25 +58,41 @@ class PhqlQueryParser extends Plugin
         if ($query->hasConditions()) {
 
             $conditions = $query->getConditions();
-            $firstWhere = true;
+
+            $andConditions = [];
+            $orConditions = [];
 
             /** @var Condition $condition */
             foreach ($conditions as $conditionIndex => $condition) {
 
+                if($condition->getType() == Condition::TYPE_AND){
+                    $andConditions[] = $condition;
+                }
+                else if($condition->getType() == Condition::TYPE_OR){
+                    $orConditions[] = $condition;
+                }
+            }
+
+            $allConditions = $orConditions + $andConditions;
+
+            /** @var Condition $condition */
+            foreach ($allConditions as $conditionIndex => $condition) {
+
                 $operator = $this->getOperator($condition->getOperator());
+
+                if(!$operator){
+                    continue;
+                }
+
                 $parsedValues = $this->parseValues($operator, $condition->getValue());
 
                 $format = $this->getConditionFormat($operator);
                 $valuesReplacementString = $this->getValuesReplacementString($parsedValues, $conditionIndex);
-                $conditionString = sprintf($format, $condition->getField(), $operator, $valuesReplacementString);
+                $fieldString = sprintf('[%s].[%s]', $fromString, $condition->getField());
+
+                $conditionString = sprintf($format, $fieldString, $operator, $valuesReplacementString);
 
                 $bindValues = $this->getBindValues($parsedValues, $conditionIndex);
-
-                if ($firstWhere) {
-                    $builder->where($conditionString, $bindValues);
-                    $firstWhere = false;
-                    continue;
-                }
 
                 switch ($condition->getType()) {
 
@@ -76,6 +105,11 @@ class PhqlQueryParser extends Plugin
                         break;
                 }
             }
+        }
+
+        if($query->hasExcludes()){
+
+            $builder->notInWhere($fromString . '.' . $resource->getModelPrimaryKey(), $query->getExcludes());
         }
 
         if ($query->hasSorters()) {
@@ -96,11 +130,10 @@ class PhqlQueryParser extends Plugin
                         break;
                 }
 
-                $builder->orderBy($sorter->getField() . ' ' . $direction);
+                $fieldString = sprintf('[%s].[%s]', $fromString, $sorter->getField());
+                $builder->orderBy($fieldString . ' ' . $direction);
             }
         }
-
-        return $builder;
     }
 
     private function getOperator($operator)
@@ -144,19 +177,7 @@ class PhqlQueryParser extends Plugin
 
     private function parseValue($operator, $value)
     {
-        $parsed = null;
-
-        switch ($operator) {
-
-            case self::OPERATOR_IS_LIKE:
-                $parsed = '%' . $value . '%';
-                break;
-            default:
-                $parsed = $value;
-                break;
-        }
-
-        return $parsed;
+        return $value;
     }
 
     private function getConditionFormat($operator)
