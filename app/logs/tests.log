@@ -18,3 +18,23 @@
 [Sun, 24 Apr 16 12:36:29 +0800][ALERT] This is an alert message
 [Sun, 24 Apr 16 12:36:29 +0800][ERROR] This is another error message
 [Sun, 24 Apr 16 12:36:29 +0800][DEBUG] This is a message
+[Sat, 06 Aug 16 12:57:28 +0800][CRITICAL] This is a critical messages
+[Sat, 06 Aug 16 12:57:28 +0800][EMERGENCY] This is an emergency message
+[Sat, 06 Aug 16 12:57:28 +0800][DEBUG] This is a debug message
+[Sat, 06 Aug 16 12:57:28 +0800][ERROR] This is an error message
+[Sat, 06 Aug 16 12:57:28 +0800][INFO] This is an info message
+[Sat, 06 Aug 16 12:57:28 +0800][NOTICE] This is a notice message
+[Sat, 06 Aug 16 12:57:28 +0800][WARNING] This is a warning message
+[Sat, 06 Aug 16 12:57:28 +0800][ALERT] This is an alert message
+[Sat, 06 Aug 16 12:57:28 +0800][ERROR] This is another error message
+[Sat, 06 Aug 16 12:57:28 +0800][DEBUG] This is a message
+[Sat, 06 Aug 16 12:57:38 +0800][CRITICAL] This is a critical messages
+[Sat, 06 Aug 16 12:57:38 +0800][EMERGENCY] This is an emergency message
+[Sat, 06 Aug 16 12:57:38 +0800][DEBUG] This is a debug message
+[Sat, 06 Aug 16 12:57:38 +0800][ERROR] This is an error message
+[Sat, 06 Aug 16 12:57:38 +0800][INFO] This is an info message
+[Sat, 06 Aug 16 12:57:38 +0800][NOTICE] This is a notice message
+[Sat, 06 Aug 16 12:57:38 +0800][WARNING] This is a warning message
+[Sat, 06 Aug 16 12:57:38 +0800][ALERT] This is an alert message
+[Sat, 06 Aug 16 12:57:38 +0800][ERROR] This is another error message
+[Sat, 06 Aug 16 12:57:38 +0800][DEBUG] This is a message

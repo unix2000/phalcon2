@@ -25,12 +25,17 @@ use Phalcon\UserPlugin\Auth\Auth;
 use Phalcon\UserPlugin\Acl\Acl;
 use Phalcon\UserPlugin\Mail\Mail;
 //use Phalcon\Mvc\DispatchEventsManager;
+use Phalcon\Db\Profiler as ProfilerDb;
 
 /**
  * The FactoryDefault Dependency Injector automatically register the right services providing a full stack framework
  */
 //$di = new FactoryDefault();
 $config = $di->get('config');
+
+$di->set('profiler', function () {
+    return new ProfilerDb();
+}, true);
 
 $di->set('collectionManager', function(){
       return new \Phalcon\Mvc\Collection\Manager();

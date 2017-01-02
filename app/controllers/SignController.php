@@ -2,6 +2,7 @@
 namespace app\controllers;
 use Phalcon\Mvc\Controller;
 use Phalcon\Mvc\View;
+use app\models\Sign;
 
 class SignController extends Controller {
     public function initialize(){
@@ -16,14 +17,20 @@ class SignController extends Controller {
         if($this->request->isPost()){
             $model->writeAttribute('name', $this->request->getPost('name'));
             $model->writeAttribute('email', $this->request->getPost('email'));
-            if($model->validation()){
+            //if($model->validation()){
+			if ($model->save() != false) {
                 echo 'success!!';
+				//$this->flash->messages('the data is valid');
             } else {
                 //dump($model->getMessages());
+				//$this->flash->error($model->getMessages());
+				foreach($model->getMessages() as $message){
+					echo $message . '<br />';
+				}
             }
                 
         }
-        dump($this->request->getPost());
+        //dump($this->request->getPost());
     }
     //public function showAction($id){
     public function showAction(){

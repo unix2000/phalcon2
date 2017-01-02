@@ -3,6 +3,7 @@
 error_reporting(E_ALL);
 ini_set( 'display_errors', '1' );
 define('APP_PATH', realpath('..'));
+//phalcon3 新版本特性
 include APP_PATH . "/app/common/global.php";
 //加载compose第三方类库
 require APP_PATH . "/vendor/autoload.php";
